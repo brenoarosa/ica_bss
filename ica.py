@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from glob import glob
 from sklearn.decomposition import FastICA
-from sklearn.metrics import normalized_mutual_info_score
+from mutual_info import mutual_information_2d
 import os
 
 
@@ -37,16 +37,18 @@ def mutual_info_pairwise(matrix, normalize=True):
     mi_matrix = np.zeros(shape=(size, size), dtype="float64")
     for i in range(size):
         for j in range(i, size):
-            mi = normalized_mutual_info_score(matrix[:, i], matrix[:, j])
+            mi = mutual_information_2d(matrix[:, i], matrix[:, j])
+            mi = 1 - np.exp(-2 * mi)
             mi_matrix[i, j] = mi
             mi_matrix[j, i] = mi
 
     return mi_matrix
 
 
-SOURCE_GLOB = "voices/*.wav"
+SOURCE_GLOB = "mono/*.wav"
 SOURCES_COUNT = len(glob(SOURCE_GLOB))
 MICROPHONE_COUNT = SOURCES_COUNT
+MICROPHONE_COUNT = 5
 audio_len = int(5e5) # .5M samples
 
 if not os.path.exists('output'):
@@ -83,15 +85,15 @@ for i in range(S_.shape[1]):
 
 
 # MI matrixs
-mi_S = mutual_info_pairwise(S)
+mi_S = mutual_info_pairwise(S, False)
 print("Sources Mutual Info:")
 print(mi_S)
 
-mi_X = mutual_info_pairwise(X)
+mi_X = mutual_info_pairwise(X, False)
 print("Microphones Mutual Info:")
 print(mi_X)
 
-mi_S_ = mutual_info_pairwise(S_)
+mi_S_ = mutual_info_pairwise(S_, False)
 print("Reconstructed Sources Mutual Info:")
 print(mi_S_)
 
