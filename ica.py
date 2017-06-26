@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from glob import glob
 from sklearn.decomposition import FastICA
 from mutual_info import mutual_information_2d
+from plot_confusion import plot_confusion_matrix
 import os
 
 
@@ -98,23 +101,6 @@ print("Reconstructed Sources Mutual Info:")
 print(mi_S_)
 
 
-"""
-# Plot results
-
-plt.figure()
-
-models = [X, S, S_]
-names = ['Observations (mixed signal)',
-         'True Sources',
-         'ICA recovered signals']
-colors = ['red', 'steelblue', 'orange']
-
-for ii, (model, name) in enumerate(zip(models, names), 1):
-    plt.subplot(4, 1, ii)
-    plt.title(name)
-    for sig, color in zip(model.T, colors):
-        plt.plot(sig, color=color)
-
-plt.subplots_adjust(0.09, 0.04, 0.94, 0.94, 0.26, 0.46)
-plt.show()
-"""
+plot_confusion_matrix(mi_S, 'mi_S.png', title='Informacao Mutua das Fontes')
+plot_confusion_matrix(mi_X, 'mi_X.png', title='Informacao Mutua das Misturas')
+plot_confusion_matrix(mi_S_, 'mi_S_.png', title='Informacao Mutua das Reconstituicoes')
